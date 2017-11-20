@@ -34,7 +34,7 @@ class Game:
 			i -= 1
 		c[i] = color
 
-		# self.checkForWin()
+		self.checkForWin()
 
 	def checkForWin (self):
 		"""Check the current board for a winner."""

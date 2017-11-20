@@ -1,4 +1,7 @@
+from connect_four import diagonalsPos, diagonalsNeg
+
 from enum import Enum
+from itertools import groupby, chain
 
 class Circle(Enum):
 	EMPTY = '.'
@@ -10,6 +13,7 @@ class State:
 	def __init__(self):
 		self.board = [[Circle.EMPTY] * 6 for _ in range(7)]
 		self.turn = Circle.RED
+		self.moves = []
 
 	def get_value(self, r, c):
 		"""
@@ -21,15 +25,22 @@ class State:
 	def get_column(self, col):
 		return self.board[col]
 
-	def insert_circle(self, col, color):
+	def insert_circle(self, col):
 		column = self.get_column(col)
 
 		# check if full
 		if column[0] != Circle.EMPTY:
 			return "error"
 
-		self.board[col][5-column[::-1].index(Circle.EMPTY)] = color
-		self.turn = Circle.RED if color == Circle.YELLOW else Circle.YELLOW
+		insert_idx = 5-column[::-1].index(Circle.EMPTY)
+		self.board[col][insert_idx] = self.turn
+		self.moves.append([col, insert_idx])
+		self.turn = Circle.RED if self.turn == Circle.YELLOW else Circle.YELLOW
+
+	def undo_move(self):
+		last_move = self.moves.pop()
+		self.board[last_move[0]][last_move[1]] = Circle.EMPTY
+		self.turn = Circle.RED if self.turn == Circle.YELLOW else Circle.YELLOW
 
 	def possible_insertions(self):
 		possible = []
@@ -60,3 +71,16 @@ class State:
 
 	def bitUnpack(self, bit):
 		pass
+
+	def check_winner(self):
+		lines = (
+			self.board, # columns
+			zip(*self.board), # rows
+			diagonalsPos(self.board, 7, 6), # positive diagonals
+			diagonalsNeg(self.board, 7, 6) # negative diagonals
+		)
+
+		for line in chain(*lines):
+			for color, group in groupby(line):
+				if color != Circle.EMPTY and len(list(group)) >= 4:
+					return color
