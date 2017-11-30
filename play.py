@@ -1,8 +1,9 @@
 from connect_four import Game, NONE, RED, YELLOW
 from mcts_agent import MCTSAgent
+from minimax_agent import MinimaxAgent
 
 g = Game()
-agent = MCTSAgent()
+agent = MinimaxAgent() #MCTSAgent()
 turn = RED
 while True:
 	g.printBoard()

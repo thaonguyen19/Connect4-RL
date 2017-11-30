@@ -25,6 +25,9 @@ class State:
 	def get_column(self, col):
 		return self.board[col]
 
+	def get_row(self, row):
+		return [self.board[col][row] for col in range(0, 7)]
+
 	def insert_circle(self, col):
 		column = self.get_column(col)
 
