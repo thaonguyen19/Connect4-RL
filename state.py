@@ -2,6 +2,7 @@ from connect_four import diagonalsPos, diagonalsNeg
 
 from enum import Enum
 from itertools import groupby, chain
+from math import log
 
 class Circle(Enum):
 	EMPTY = '.'
@@ -59,21 +60,44 @@ class State:
 		"""
 		bit = 0
 		counter = 0
+		n_bit_per_pos = 3
 		for col in self.board:
 			for circle in col:
 				if circle == Circle.EMPTY:
-					bit += 0
+					bit += 1 * 2**(n_bit_per_pos*counter)
 				if circle == Circle.RED:
-					bit += 1 * 2**(2*counter)
+					bit += 2 * 2**(n_bit_per_pos*counter)
 				if circle == Circle.YELLOW:
-					bit += 2 * 2**(2*counter)
+					bit += 4 * 2**(n_bit_per_pos*counter)
 				counter += 1
 		if self.turn == Circle.RED:
-			bit += 1 * 2**84
+			bit += 1 * 2**(n_bit_per_pos*42)
 		return bit
 
 	def bitUnpack(self, bit):
-		pass
+		n_bit_per_pos = 3
+		on_bit_pos = []
+		bit_copy = bit % (2**(n_bit_per_pos*42))
+		if bit_copy < bit: #largest bit = 1
+			turn = Circle.RED
+		else:
+			turn = Circle.YELLOW
+		
+		while bit_copy > 0:
+			p = bit_copy.bit_length()-1
+			on_bit_pos.append(p)
+			bit_copy -= 2**p
+		all_values = [Circle.EMPTY for _ in range(42)]
+		for bit_pos in on_bit_pos:
+			pos = int(bit_pos/3)
+			if bit_pos % 3 == 1:
+				all_values[pos] = Circle.RED
+			elif bit_pos % 3 == 2:
+				all_values[pos] = Circle.YELLOW
+		board = []
+		for i in range(0, len(all_values), 6):
+			board.append(all_values[i:(i+6)])
+		return board, turn
 
 	def check_winner(self):
 		lines = (
