@@ -1,13 +1,13 @@
 import os
 import pickle
 
-from agent import Agent
+from qlearning_agent import QLearningAgent
 
 NUM_GAMES = 100
 FILE = "q_values"
 
 def main():
-	agent = Agent()
+	agent = QLearningAgent()
 	if os.path.isfile(FILE):
 		with open(FILE, 'r') as f:
 			agent.Q = pickle.load(f)
