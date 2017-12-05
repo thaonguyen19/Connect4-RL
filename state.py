@@ -15,6 +15,8 @@ class State:
 		self.board = [[Circle.EMPTY] * 6 for _ in range(7)]
 		self.turn = Circle.RED
 		self.moves = []
+		self.cols = 7
+		self.rows = 6
 
 	def get_value(self, r, c):
 		"""
@@ -111,3 +113,9 @@ class State:
 			for color, group in groupby(line):
 				if color != Circle.EMPTY and len(list(group)) >= 4:
 					return color
+
+	def printBoard(self):
+		"""Print the board."""
+		print('  '.join(map(str, range(self.cols))))
+		for y in range(self.rows):
+			print('  '.join(str(self.board[x][y].value) for x in range(self.cols)))

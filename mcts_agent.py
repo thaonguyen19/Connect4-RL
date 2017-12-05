@@ -8,7 +8,7 @@ import pickle
 import random
 
 class MCTSAgent:
-	def __init__(self):
+	def __init__(self, num_simulations=100):
 		self.Q = defaultdict(float)
 		self.N = defaultdict(int)
 		self.T = set()
@@ -16,9 +16,12 @@ class MCTSAgent:
 		self.reward = 1
 		self.c = 1  # exploration parameter
 		self.state = State()
+		self.num_simulations = num_simulations
 
 	def play_move(self):
 		best_move = self.best_move(42)
+		if best_move is None:
+			return None
 		self.state.insert_circle(best_move)
 		return best_move
 
@@ -30,16 +33,16 @@ class MCTSAgent:
 		if len(possible) == 0:
 			return None
 
-		for _ in range(100):
+		for _ in range(self.num_simulations):
 			state = deepcopy(self.state)
 			self.simulate(state, depth)
 
-		print('N (action, count)')
-		for e in [entry for entry in self.N.items() if entry[0][0] == self.state.bitPack()]:
-			print(e[0][1], e[1])
-		print('Q (action, value)')
-		for e in [entry for entry in self.Q.items() if entry[0][0] == self.state.bitPack()]:
-			print(e[0][1], e[1])
+		# print('N (action, count)')
+		# for e in [entry for entry in self.N.items() if entry[0][0] == self.state.bitPack()]:
+		# 	print(e[0][1], e[1])
+		# print('Q (action, value)')
+		# for e in [entry for entry in self.Q.items() if entry[0][0] == self.state.bitPack()]:
+		# 	print(e[0][1], e[1])
 
 		best_action = -1
 		best_value = -1
