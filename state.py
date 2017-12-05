@@ -55,7 +55,7 @@ class State:
 
 	def bitPack(self):
 		"""
-		First 84 bits encode value at each of 42 cells
+		First 126 bits encode value at each of 42 cells
 		Last bit encodes whose turn it is
 		"""
 		bit = 0
