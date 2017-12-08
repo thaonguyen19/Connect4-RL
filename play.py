@@ -1,6 +1,7 @@
 from connect_four import Game, NONE, RED, YELLOW
 from mcts_agent import MCTSAgent
 from minimax_agent import MinimaxAgent
+from qlearning_agent import QLearningAgent
 import random
 import numpy as np
 import collections
@@ -9,18 +10,22 @@ human_involved = False
 
 def play_w_human():
 	g = Game()
-	agent = MinimaxAgent() #MCTSAgent()
+	# agent = MinimaxAgent() #MCTSAgent()
+	agent = QLearningAgent('q_values')
 	turn = RED
 
 	while True:
 		g.printBoard()
 		if turn == RED:
 			row = input('{}\'s turn: '.format('Red' if turn == RED else 'Yellow'))
-			g.insert(int(row), turn)
+			w = g.insert(int(row), turn)
 			agent.play_opponent_move(int(row))
 		else:
 			move = agent.play_move()
-			g.insert(move, turn)
+			w = g.insert(move, turn)
+		if w:
+			print "WINNER: ", w
+			break
 		turn = YELLOW if turn == RED else RED
 
 def play_wo_human(agent1, agent2):
