@@ -9,13 +9,63 @@ import random
 
 # Assumes that agent is yellow (ie, plays second)
 class QLearningAgent:
-	def __init__(self):
-		self.Q = defaultdict(float)
+	def __init__(self, q_file=None):
+		if q_file is None:
+			self.Q = defaultdict(float)
+		else:
+			with open(q_file, 'r') as f:
+				self.Q = pickle.load(f)
 		self.gamma = 0.9  # discount rate
 		self.alpha = 0.1  # learning rate
 		self.lamb = 0.9  # lambda-learning rate
 		self.reward = 1
 		self.mcts_weight = 0.1
+		self.state = State()
+
+	### Playing methods ###
+
+	def play_move(self):
+		best_move = self.best_move()
+		if best_move is None:
+			return None
+		self.state.insert_circle(best_move)
+		return best_move
+
+	def play_opponent_move(self, move):
+		self.state.insert_circle(move)
+
+	def best_move(self):
+		possible = self.state.possible_insertions()
+		if len(possible) == 0:
+			return None
+
+		bitpacked_state = self.state.bitPack()
+		moves_values = self.closest_moves(bitpacked_state)
+		moves_values.sort(key=lambda x: x[1], reverse=True)
+
+		# return possible move with highest q-value
+		for move_value in moves_values:
+			if move_value[0] in possible:
+				return move_value[0]
+		return random.choice(possible)
+
+	def closest_moves(self, bitpacked_state, n_states=1):
+		"""
+		Performs similarity search over self.Q to find closes state
+		"""
+		closest = []
+		max_common_bits = 0
+		for state_move, q_value in self.Q.items():
+			num_common_bits = bin(bitpacked_state ^ state_move[0]).count("1")
+			if num_common_bits > max_common_bits:
+				max_common_bits = num_common_bits
+				closest = [(state_move[1], q_value)]
+			if num_common_bits == max_common_bits:
+				closest.append((state_move[1], q_value))
+		return closest
+
+
+	### Training methods ###
 
 	# TODO: fix
 	def random_move(self, state):
@@ -50,7 +100,7 @@ class QLearningAgent:
 			N *= self.lamb * self.gamma
 
 		# update based on Q-values from MCTS searches, with lower weight
-		for state_move, value in agent.Q:
+		for state_move, value in agent.Q.items():
 			self.Q[state_move] += self.mcts_weight * value
 
 	# Idea: weight the updates from game path more than branches

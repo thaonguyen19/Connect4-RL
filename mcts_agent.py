@@ -44,8 +44,8 @@ class MCTSAgent:
 		# for e in [entry for entry in self.Q.items() if entry[0][0] == self.state.bitPack()]:
 		# 	print(e[0][1], e[1])
 
-		best_action = -1
-		best_value = -1
+		best_action = 0 #-1
+		best_value = float("-inf")
 		bitpacked_state = self.state.bitPack()
 		for action in possible:
 			if self.Q[(bitpacked_state, action)] > best_value:
@@ -64,8 +64,8 @@ class MCTSAgent:
 				self.Q[(bitpacked_state, action)] = 0
 			self.T.add(bitpacked_state)
 			return self.rollout(state, depth)
-		next_action = -1
-		max_value = -1
+		next_action = 0 #-1
+		max_value = float("-inf")
 		for action in state.possible_insertions():
 			# calculate value of action
 			matching_counts = [v for k, v in self.N.items() if k[0] == bitpacked_state]
