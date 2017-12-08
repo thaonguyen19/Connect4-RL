@@ -11,7 +11,7 @@ def evaluate(state):
 	- for each diagonal, count number of empty/same color balls in the diagonal, score increases by number of ball (at least 4)
 	"""
 	signs = {Circle.RED: -1, Circle.YELLOW: +1}
-	total_score = score_cols(state, signs) + score_rows(state, signs) + score_diagonals(state, signs)
+	total_score = score_rows(state, signs) + score_cols(state, signs) #+ score_diagonals(state, signs)
 	return total_score
 
 def score_cols(state, signs):
@@ -28,8 +28,12 @@ def score_cols(state, signs):
 				break
 			else:
 				count += 1
-		if count >= 2:
-			score += 2 * signs[last_color] * count
+		if count == 4:
+			return signs[last_color] * 100000
+		if count == 3:
+			score += signs[last_color] * 1000 * count
+		if count == 2:
+			score += signs[last_color] * count
 	#print "score cols: ", score
 	return score
 
@@ -43,15 +47,18 @@ def score_rows(state, signs):
 				color = row_values[i]
 				back_i, forward_i = i-1, i+1
 				count = 1
-				while back_i>=0 and (row_values[back_i] == color or row_values[back_i] == Circle.EMPTY):
+				while back_i>=0 and row_values[back_i] == color:
 					count += 1
 					back_i -= 1
-				while forward_i <= 6 and (row_values[forward_i] == color or row_values[forward_i] == Circle.EMPTY):
+				while forward_i <= 6 and row_values[forward_i] == color:
 					count += 1
 					forward_i += 1
-				if count >= 4:
-					score += signs[color] * (r+1) * count
-	#print "score rows: ", score
+				if count == 4:
+					return signs[color] * 10000
+				if count == 3:
+					score += signs[color] * 1000 * count #(r+1) * count
+				if count == 2:
+					score += signs[color] * count
 	return score
 
 def score_diagonals(state, signs):
@@ -106,12 +113,14 @@ class MinimaxAgent:
 	def __init__(self):
 		self.Q = defaultdict(float)
 		self.gamma = 0.9  # discount rate
-		self.reward = 10000
+		self.reward = 100000
 		self.c = 1  # exploration parameter
 		self.state = State()
 
 	def play_move(self):
-		best_move = self.best_move(2) #get the action for maxAgent
+		best_move = self.best_move(depth=3) #get the action for maxAgent
+		if best_move is None:
+			return None
 		self.state.insert_circle(best_move)
 		return best_move
 
@@ -140,6 +149,8 @@ class MinimaxAgent:
 			self.state.turn = curr_turn
 		'''
 		bestVal, bestAction = self.minimax(True, depth)
+		if bestAction is None:
+			return None
 		return bestAction
 
 	def minimax(self, maxAgent, depth):
@@ -147,13 +158,24 @@ class MinimaxAgent:
 		possible = self.state.possible_insertions()
 		if len(possible) == 0: #draw
 			return 0, None
-		winner = self.state.check_winner()
-		if winner == Circle.RED:
-			return self.reward, None
-		elif winner == Circle.YELLOW:
-			return -1.0*self.reward, None
+		# for action in possible:
+		# 	self.state.insert_circle(action)
+		# 	winner = self.state.check_winner()
+		# 	self.state.undo_move()
+		# 	if winner:
+		# 		return self.reward, action
+
+		# winner = self.state.check_winner()
+		# if winner == Circle.RED:
+		# 	return self.reward, None
+		# elif winner == Circle.YELLOW:
+		# 	return -1.0*self.reward, None
+
 		if depth==0:
-			return evaluate(self.state), None
+			score = evaluate(self.state)
+			#print "EVALUATION: ", score
+			#self.state.printBoard()
+			return score, None
 
 		bestAction = None
 		if maxAgent:

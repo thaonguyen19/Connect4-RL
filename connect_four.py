@@ -34,14 +34,16 @@ class Game:
 			i -= 1
 		c[i] = color
 
-		self.checkForWin()
+		w = self.checkForWin()
+		return w
 
 	def checkForWin (self):
 		"""Check the current board for a winner."""
 		w = self.getWinner()
 		if w:
 			self.printBoard()
-			raise Exception(w + ' won!')
+			#raise Exception(w + ' won!')
+		return w
 
 	def getWinner (self):
 		"""Get the winner on the current board."""
