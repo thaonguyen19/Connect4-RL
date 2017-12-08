@@ -116,6 +116,7 @@ class MinimaxAgent:
 		self.reward = 100000
 		self.c = 1  # exploration parameter
 		self.state = State()
+		self.name = 'MinimaxAgent'
 
 	def play_move(self):
 		best_move = self.best_move(depth=3) #get the action for maxAgent
@@ -195,7 +196,7 @@ class MinimaxAgent:
 				self.state.undo_move()
 				if value <= bestVal:
 					bestVal = value
-					bestAction = action			
+					bestAction = action		
 		return bestVal, bestAction
 
 

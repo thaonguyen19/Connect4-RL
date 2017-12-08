@@ -17,6 +17,7 @@ class MCTSAgent:
 		self.c = 1  # exploration parameter
 		self.state = State()
 		self.num_simulations = num_simulations
+		self.name = 'MCTSAgent'
 
 	def play_move(self):
 		best_move = self.best_move(42)
