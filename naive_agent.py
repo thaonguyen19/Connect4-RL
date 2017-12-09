@@ -25,7 +25,10 @@ class NaiveAgent:
 		for offset in [-1, 0, 1]:
 			if self.last_move + offset in possible:
 				neighboring_moves.append(self.last_move + offset)
-		move = random.choice(neighboring_moves)
+		if len(neighboring_moves) == 0:
+			move = random.choice(possible)
+		else:
+			move = random.choice(neighboring_moves)
 		self.state.insert_circle(move)
 		self.last_move = move
 		return move
