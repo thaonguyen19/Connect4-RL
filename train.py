@@ -3,7 +3,7 @@ import pickle
 
 from qlearning_agent import QLearningAgent
 
-NUM_GAMES = 275
+NUM_GAMES = 200
 FILE = "q_values"
 
 def main():

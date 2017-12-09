@@ -41,6 +41,14 @@ class QLearningAgent:
 		if len(possible) == 0:
 			return None
 
+		# one-move horizon check to see if any move wins immediately
+		for action in possible:
+			self.state.insert_circle(action)
+			winner = self.state.check_winner()
+			self.state.undo_move()
+			if winner:
+				return action
+
 		bitpacked_state = self.state.bitPack()
 		moves_values = self.closest_moves(bitpacked_state)
 		moves_values.sort(key=lambda x: x[1], reverse=True)
@@ -126,8 +134,8 @@ class QLearningAgent:
 
 	# Idea: weight the updates from game path more than branches
 	def train(self):
-		red_agent = MCTSAgent(num_simulations=20)
-		yellow_agent = MCTSAgent(num_simulations=20)
+		red_agent = MCTSAgent(num_simulations=50)
+		yellow_agent = MCTSAgent(num_simulations=50)
 		trace = []
 		while True:
 			cur_state = yellow_agent.state.bitPack()
