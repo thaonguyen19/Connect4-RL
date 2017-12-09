@@ -21,6 +21,7 @@ class QLearningAgent:
 		self.reward = 1
 		self.mcts_weight = 0.1
 		self.state = State()
+		self.name = 'QLearningAgent'
 
 	### Playing methods ###
 

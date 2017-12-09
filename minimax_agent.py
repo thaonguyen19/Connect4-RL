@@ -31,9 +31,9 @@ def score_cols(state, signs):
 		if count == 4:
 			return signs[last_color] * 100000
 		if count == 3:
-			score += signs[last_color] * 1000 * count
+			score += 1000 * count * signs[last_color]
 		if count == 2:
-			score += signs[last_color] * count
+			score += count * signs[last_color] 
 	#print "score cols: ", score
 	return score
 
@@ -54,11 +54,11 @@ def score_rows(state, signs):
 					count += 1
 					forward_i += 1
 				if count == 4:
-					return signs[color] * 10000
+					return signs[color] * 100000
 				if count == 3:
-					score += signs[color] * 1000 * count #(r+1) * count
+					score += 1000 * count *signs[last_color]
 				if count == 2:
-					score += signs[color] * count
+					score += count * signs[last_color] 
 	return score
 
 def score_diagonals(state, signs):

@@ -55,7 +55,7 @@ def play_wo_human(agent1, agent2):
 			w = g.insert(move, turn)
 			if w:
 				winner = agent_turn_dict[w]
-				print "WINNER: ", winner, " TOTAL MOVES: ", count_moves
+				print "####################WINNER: ", winner, " TOTAL MOVES: ", count_moves
 				break
 			agent2.play_opponent_move(move)
 		else:
@@ -68,7 +68,7 @@ def play_wo_human(agent1, agent2):
 			w = g.insert(move, turn)
 			if w:
 				winner = agent_turn_dict[w]
-				print "WINNER: ", winner, " TOTAL MOVES: ", count_moves
+				print "#################WINNER: ", winner, " TOTAL MOVES: ", count_moves
 				break
 			agent1.play_opponent_move(move)
 		count_moves += 1
@@ -81,7 +81,7 @@ if __name__ == "__main__":
 		play_w_human()
 	else:
 		results = collections.defaultdict(list)
-		for i in range(100):
+		for i in range(10):
 			print "################ Game ", i
 			agent1 = MCTSAgent()
 			agent2 = MinimaxAgent() #assume to take turn YELLOW
