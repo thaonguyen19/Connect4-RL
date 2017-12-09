@@ -6,7 +6,7 @@ import random
 import numpy as np
 import collections
 
-human_involved = False
+human_involved = True
 
 def play_w_human():
 	g = Game()
@@ -38,10 +38,15 @@ def play_wo_human(agent1, agent2):
 
 	count_moves = 0
 	winner = None
-	#randomize turn who starts first
-	turn_ind = random.randint(1,2)
+
 	g = Game()
-	turn = turn_dict[turn_ind]
+
+	# #randomize turn who starts first
+	# turn_ind = random.randint(1,2)
+	# turn = turn_dict[turn_ind]
+
+	turn = turn_dict[1]
+
 	print "Starting with turn = ", agent_turn_dict[turn]
 	while True:
 		g.printBoard()
