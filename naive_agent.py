@@ -15,14 +15,18 @@ class NaiveAgent:
 			return None
 
 		if self.last_move is None:
-			return random.choice(possible)
+			move = random.choice(possible)
+			self.last_move = move
+			return move
 
 		neighboring_moves = []
 		for offset in [-1, 0, 1]:
 			if self.last_move + offset in possible:
 				neighboring_moves.append(self.last_move + offset)
 
-		return random.choice(neighboring_moves)
+		move = random.choice(neighboring_moves)
+		self.last_move = move
+		return move
 
 	def play_opponent_move(self, move):
 		self.state.insert_circle(move)
