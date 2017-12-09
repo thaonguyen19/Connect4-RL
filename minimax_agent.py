@@ -1,4 +1,4 @@
-from connect_four import Game
+from connect_four import Game, NONE, RED, YELLOW
 from state import State, Circle
 from collections import defaultdict
 

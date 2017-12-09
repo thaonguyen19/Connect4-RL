@@ -53,7 +53,6 @@ def play_wo_human(agent1, agent2):
 		if turn == RED:
 			print agent1.name, "'s turn"
 			move = agent1.play_move()
-			print move
 			if move is None:
 				print "DRAW GAME"
 				break
@@ -66,7 +65,6 @@ def play_wo_human(agent1, agent2):
 		else:
 			print agent2.name, "'s turn"
 			move = agent2.play_move()
-			print move
 			if move is None:
 				print "DRAW GAME"
 				break
