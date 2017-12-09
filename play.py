@@ -5,6 +5,7 @@ from qlearning_agent import QLearningAgent
 import random
 import numpy as np
 import collections
+import time
 
 human_involved = True
 
@@ -28,31 +29,35 @@ def play_w_human():
 			break
 		turn = YELLOW if turn == RED else RED
 
-def play_wo_human(agent1, agent2):
+def play_wo_human(agent1, agent2, first_player):
 	'''
 	Default: agent 1 plays RED
 	agent 2 plays YELLOW
 	'''
 	turn_dict = {1: RED, 2: YELLOW}
 	agent_turn_dict = {RED: agent1.name, YELLOW: agent2.name}
+	times = {agent1.name: 0, agent2.name: 0}
 
 	count_moves = 0
 	winner = None
 
 	g = Game()
 
-	#randomize turn who starts first
-	turn_ind = random.randint(1,2)
-	turn = turn_dict[turn_ind]
+	# #randomize turn who starts first
+	# turn_ind = random.randint(1,2)
+	# turn = turn_dict[turn_ind]
 
-	turn = turn_dict[1]
+	turn = turn_dict[first_player]
 
 	print "Starting with turn = ", agent_turn_dict[turn]
 	while True:
 		g.printBoard()
 		if turn == RED:
 			print agent1.name, "'s turn"
+			start = time.time()
 			move = agent1.play_move()
+			end = time.time()
+			times[agent1.name] += (end-start)
 			if move is None:
 				print "DRAW GAME"
 				break
@@ -64,7 +69,10 @@ def play_wo_human(agent1, agent2):
 			agent2.play_opponent_move(move)
 		else:
 			print agent2.name, "'s turn"
+			start = time.time()
 			move = agent2.play_move()
+			end = time.time()
+			times[agent2.name] += (end-start)
 			if move is None:
 				print "DRAW GAME"
 				break
@@ -76,7 +84,7 @@ def play_wo_human(agent1, agent2):
 			agent1.play_opponent_move(move)
 		count_moves += 1
 		turn = YELLOW if turn == RED else RED
-	return winner, count_moves
+	return winner, count_moves, times
 
 
 # if __name__ == "__main__":
