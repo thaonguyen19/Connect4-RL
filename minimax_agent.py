@@ -2,7 +2,7 @@ from connect_four import Game
 from state import State, Circle
 from collections import defaultdict
 
-def evaluate(state): 
+def evaluate(state, signs): 
 	"""
 	Rule: (YELLOW for the main player, RED for opponent)
 	- for each column of consecutive balls (at least 2 and not blocked), the score increases by 3*sign*number of balls in col
@@ -10,7 +10,6 @@ def evaluate(state):
 	to prefer lower rows
 	- for each diagonal, count number of empty/same color balls in the diagonal, score increases by number of ball (at least 4)
 	"""
-	signs = {Circle.RED: -1, Circle.YELLOW: +1}
 	total_score = score_rows(state, signs) + score_cols(state, signs) #+ score_diagonals(state, signs)
 	return total_score
 
@@ -56,9 +55,9 @@ def score_rows(state, signs):
 				if count == 4:
 					return signs[color] * 100000
 				if count == 3:
-					score += 1000 * count *signs[last_color]
+					score += 1000 * count *signs[color]
 				if count == 2:
-					score += count * signs[last_color] 
+					score += count * signs[color] 
 	return score
 
 def score_diagonals(state, signs):
@@ -110,7 +109,7 @@ def score_diagonals(state, signs):
 	return score
 
 class MinimaxAgent:
-	def __init__(self, depth=3):
+	def __init__(self, depth=3, turn_color=YELLOW):
 		self.Q = defaultdict(float)
 		self.gamma = 0.9  # discount rate
 		self.reward = 100000
@@ -118,6 +117,10 @@ class MinimaxAgent:
 		self.state = State()
 		self.depth = depth
 		self.name = 'MinimaxAgent'
+		if turn_color == YELLOW:
+			self.signs = {Circle.RED: -1, Circle.YELLOW: +1}
+		else:
+			self.signs = {Circle.RED: +1, Circle.YELLOW: -1}
 
 	def play_move(self):
 		best_move = self.best_move(depth=self.depth) #get the action for maxAgent
@@ -174,7 +177,7 @@ class MinimaxAgent:
 		# 	return -1.0*self.reward, None
 
 		if depth==0:
-			score = evaluate(self.state)
+			score = evaluate(self.state, self.signs)
 			#print "EVALUATION: ", score
 			#self.state.printBoard()
 			return score, None

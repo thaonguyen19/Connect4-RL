@@ -7,7 +7,7 @@ from qlearning_agent import QLearningAgent
 import collections
 import copy
 
-def test_agents(agent1, agent2, n_trials=100):
+def test_agents(agent1, agent2, n_trials=10):
 	results = collections.defaultdict(list)
 	for i in range(n_trials):
 		print "################ Game ", i
@@ -31,6 +31,6 @@ def test_agents(agent1, agent2, n_trials=100):
 
 if __name__ == "__main__":
 	test_agents(NaiveAgent(), MCTSAgent())
-	test_agents(MinimaxAgent(depth=2), MCTSAgent())
-	test_agents(MinimaxAgent(depth=2), QLearningAgent("q_values"))
+	test_agents(MCTSAgent(), MinimaxAgent(depth=3))
+	test_agents(QLearningAgent("q_values"), MinimaxAgent(depth=3))
 	test_agents(MCTSAgent(), QLearningAgent("q_values"))

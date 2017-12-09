@@ -41,9 +41,9 @@ def play_wo_human(agent1, agent2):
 
 	g = Game()
 
-	# #randomize turn who starts first
-	# turn_ind = random.randint(1,2)
-	# turn = turn_dict[turn_ind]
+	#randomize turn who starts first
+	turn_ind = random.randint(1,2)
+	turn = turn_dict[turn_ind]
 
 	turn = turn_dict[1]
 
@@ -81,22 +81,22 @@ def play_wo_human(agent1, agent2):
 	return winner, count_moves
 
 
-if __name__ == "__main__":
-	if human_involved:
-		play_w_human()
-	else:
-		results = collections.defaultdict(list)
-		for i in range(10):
-			print "################ Game ", i
-			agent1 = MCTSAgent()
-			agent2 = MinimaxAgent() #assume to take turn YELLOW
-			winner, count_moves = play_wo_human(agent1, agent2)
-			if winner:
-				results[winner].append(count_moves)
+# if __name__ == "__main__":
+# 	if human_involved:
+# 		play_w_human()
+# 	else:
+# 		results = collections.defaultdict(list)
+# 		for i in range(10):
+# 			print "################ Game ", i
+# 			agent1 = MCTSAgent()
+# 			agent2 = MinimaxAgent() #assume to take turn YELLOW
+# 			winner, count_moves = play_wo_human(agent1, agent2)
+# 			if winner:
+# 				results[winner].append(count_moves)
 
-		print results
-		print "TOTAL GAMES WON BY MCTS: ", len(results['MCTSAgent'])
-		print "AVERAGE NO. MOVES: ", sum(results['MCTSAgent'])/ len(results['MCTSAgent'])
-		print "TOTAL GAMES WON BY Minimax: ", len(results['MinimaxAgent'])
-		print "AVERAGE NO. MOVES: ", sum(results['MinimaxAgent'])/ len(results['MinimaxAgent'])
+# 		print results
+# 		print "TOTAL GAMES WON BY MCTS: ", len(results['MCTSAgent'])
+# 		print "AVERAGE NO. MOVES: ", sum(results['MCTSAgent'])/ len(results['MCTSAgent'])
+# 		print "TOTAL GAMES WON BY Minimax: ", len(results['MinimaxAgent'])
+# 		print "AVERAGE NO. MOVES: ", sum(results['MinimaxAgent'])/ len(results['MinimaxAgent'])
 
