@@ -7,7 +7,7 @@ from copy import deepcopy
 import pickle
 import random
 
-# Assumes that agent is yellow (ie, plays second)
+
 class QLearningAgent:
 	def __init__(self, q_file=None):
 		if q_file is None:
@@ -19,9 +19,10 @@ class QLearningAgent:
 		self.alpha = 0.1  # learning rate
 		self.lamb = 0.9  # lambda-learning rate
 		self.reward = 1
-		self.mcts_weight = 0.1
+		self.mcts_weight = 0.01
 		self.state = State()
-		self.name = 'QLearningAgent'
+		self.name = "QLearningAgent"
+
 
 	### Playing methods ###
 
@@ -56,7 +57,10 @@ class QLearningAgent:
 		"""
 		closest = []
 		max_common_bits = 0
+		cur_turn = self.state.turn
 		for state_move, q_value in self.Q.items():
+			if self.state.bitUnpack(state_move[0]) != cur_turn:
+				continue
 			num_common_bits = bin(bitpacked_state ^ state_move[0]).count("1")
 			if num_common_bits > max_common_bits:
 				max_common_bits = num_common_bits
@@ -68,7 +72,6 @@ class QLearningAgent:
 
 	### Training methods ###
 
-	# TODO: fix
 	def random_move(self, state):
 		"""
 		Do local approximation.
@@ -81,16 +84,17 @@ class QLearningAgent:
 		return random.choice(possible)
 
 	# TODO: add negative reward for loser?
-	def lambda_learn(self, trace, agent):
-		winner = agent.state.check_winner()
+	def lambda_learn(self, trace, winner, red_agent, yellow_agent):
 		if winner == Circle.YELLOW:
 			sign = 1
 			yellow_moves = trace[::-2]
+			red_moves = trace[:-1][::-2]
 		else:
 			sign = -1
 			yellow_moves = trace[:-1][::-2]
+			red_moves = trace[::-2]
 
-		# update based on game trace
+		# update yellow moves based on game trace
 		N = 1
 		last = yellow_moves[-1]
 		penultimate = yellow_moves[-2]
@@ -100,9 +104,25 @@ class QLearningAgent:
 			self.Q[state_move] += sign * self.alpha * N * delta
 			N *= self.lamb * self.gamma
 
-		# update based on Q-values from MCTS searches, with lower weight
-		for state_move, value in agent.Q.items():
-			self.Q[state_move] += self.mcts_weight * value
+		# update red moves based on game trace
+		N = 1
+		last = red_moves[-1]
+		penultimate = red_moves[-2]
+		delta = self.reward + self.gamma * self.Q[last] \
+			- self.Q[penultimate]
+		for state_move in red_moves:
+			self.Q[state_move] += -1 * sign * self.alpha * N * delta
+			N *= self.lamb * self.gamma
+
+		# update yellow moves based on Q-values from MCTS searches, with lower weight
+		for state_move, value in yellow_agent.Q.items():
+			if self.state.bitUnpack(state_move[0]) == Circle.YELLOW:
+				self.Q[state_move] += self.mcts_weight * value
+
+		# update red moves based on Q-values from MCTS searches, with lower weight
+		for state_move, value in red_agent.Q.items():
+			if self.state.bitUnpack(state_move[0]) == Circle.RED:
+				self.Q[state_move] += self.mcts_weight * value
 
 	# Idea: weight the updates from game path more than branches
 	def train(self):
@@ -124,8 +144,9 @@ class QLearningAgent:
 				red_agent.play_opponent_move(move)
 			trace.append((cur_state, move))
 
-			if yellow_agent.state.check_winner() is not None:
-				self.lambda_learn(trace, yellow_agent)
+			winner = yellow_agent.state.check_winner()
+			if winner is not None:
+				self.lambda_learn(trace, winner, red_agent, yellow_agent)
 				yellow_agent.state.printBoard()
 				break
 

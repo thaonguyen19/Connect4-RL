@@ -110,16 +110,17 @@ def score_diagonals(state, signs):
 	return score
 
 class MinimaxAgent:
-	def __init__(self):
+	def __init__(self, depth=3):
 		self.Q = defaultdict(float)
 		self.gamma = 0.9  # discount rate
 		self.reward = 100000
 		self.c = 1  # exploration parameter
 		self.state = State()
+		self.depth = depth
 		self.name = 'MinimaxAgent'
 
 	def play_move(self):
-		best_move = self.best_move(depth=3) #get the action for maxAgent
+		best_move = self.best_move(depth=self.depth) #get the action for maxAgent
 		if best_move is None:
 			return None
 		self.state.insert_circle(best_move)
